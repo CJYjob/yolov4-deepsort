@@ -136,6 +136,31 @@ save_model.py:
     (default: False)
 ```
 
+### 변경점
+
+***object_tracker_fast_reid.py***: [Fast ReID](https://github.com/JDAI-CV/fast-reid)을 Veriwild dataset으로 학습한 pretrained model을 Deep Appearance Descriptor로 활용하였다. (기존의 MARS dataset을 활용한 모델을 대체함)
+
+또한 해결하고자 하는 문제가 CCTV 영상이므로 관심영역에 대해 white list를 지정할 수 있다. 이를 video_mask라는 masking image를 직접 생성하여 지정할 수 있다. 
+
+***object_two_tracker.py***: 현재 개발중인 파일로 현재는 두 개의 영상을 엮어서 처리 결과를 하나의 영상으로 반환해준다. 해당 파일의 목적은 두 영상에서 등장하는 차량의 동일성 여부를 표기하기 위함이다. 
+
+
+```bash
+object_tracker_fast_reid.py
+  (Additional)
+  --video_mask : path to image about whitelist region for video
+    (default: None)
+
+object_two_tracker.py
+  (Alternative)
+  --video1 : path to first video. its size should be larger than video2
+  --video2 : path to second video
+  --video_mask1 : path to image about whitelist region for video1
+  --video_mask2 : path to image about whitelist region for video2
+
+```
+
+
 ### References  
 
    Huge shoutout goes to hunglc007 and nwojke for creating the backbones of this repository:
