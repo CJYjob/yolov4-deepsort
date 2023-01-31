@@ -37,6 +37,8 @@ flags.DEFINE_float('score', 0.50, 'score threshold')
 flags.DEFINE_boolean('dont_show', False, 'dont show video output')
 flags.DEFINE_boolean('info', False, 'show detailed info of tracked objects')
 flags.DEFINE_boolean('count', False, 'count objects being tracked on screen')
+flags.DEFINE_string("video_mask", None, 'path to input video mask')
+
 
 def main(_argv):
     # Definition of the parameters
@@ -79,6 +81,10 @@ def main(_argv):
     except:
         vid = cv2.VideoCapture(video_path)
 
+    # get video mask
+    if FLAGS.video_mask:
+        mask = cv2.imread(FLAGS.video_mask)//255
+    
     out = None
 
     # get video ready to save locally if flag is set
@@ -101,9 +107,13 @@ def main(_argv):
             print('Video has ended or failed, try a different video format!')
             break
         frame_num +=1
-        print('Frame #: ', frame_num)
+        print(f'Frame #: {frame_num} / {vid.get(cv2.CAP_PROP_FRAME_COUNT)}')
         frame_size = frame.shape[:2]
-        image_data = cv2.resize(frame, (input_size, input_size))
+        
+        if FLAGS.video_mask:
+            image_data = cv2.resize(frame * mask, (input_size, input_size))
+        else:
+            image_data = cv2.resize(frame, (input_size, input_size))
         image_data = image_data / 255.
         image_data = image_data[np.newaxis, ...].astype(np.float32)
         start_time = time.time()
@@ -157,10 +167,10 @@ def main(_argv):
         class_names = utils.read_class_names(cfg.YOLO.CLASSES)
 
         # by default allow all classes in .names file
-        allowed_classes = list(class_names.values())
+        # allowed_classes = list(class_names.values())
         
         # custom allowed classes (uncomment line below to customize tracker for only people)
-        #allowed_classes = ['person']
+        allowed_classes = ['car']
 
         # loop through objects and use class index to get class name, allow only classes in allowed_classes list
         names = []
